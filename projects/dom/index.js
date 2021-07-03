@@ -10,7 +10,11 @@
  Пример:
    createDivWithText('loftschool') // создаст элемент div, поместит в него 'loftschool' и вернет созданный элемент
  */
-function createDivWithText(text) {}
+function createDivWithText(text) {
+  const element = document.createElement('div');
+  element.textContent = text;
+  return element;
+}
 
 /*
  Задание 2:
@@ -20,7 +24,9 @@ function createDivWithText(text) {}
  Пример:
    prepend(document.querySelector('#one'), document.querySelector('#two')) // добавит элемент переданный первым аргументом в начало элемента переданного вторым аргументом
  */
-function prepend(what, where) {}
+function prepend(what, where) {
+  where.prepend(what);
+}
 
 /*
  Задание 3:
@@ -32,16 +38,25 @@ function prepend(what, where) {}
  Пример:
    Представим, что есть разметка:
    <body>
-      <div></div>
-      <p></p>
-      <a></a>
-      <span></span>
-      <p></p>
+	  <div></div>
+	  <p></p>
+	  <a></a>
+	  <span></span>
+	  <p></p>
    </body>
 
    findAllPSiblings(document.body) // функция должна вернуть массив с элементами div и span т.к. следующим соседом этих элементов является элемент с тегом P
  */
-function findAllPSiblings(where) {}
+function findAllPSiblings(where) {
+  const fn = [];
+  for (const element of where.children) {
+    if (element.nextElementSibling && element.nextElementSibling.tagName === 'P') {
+      fn.push(element);
+    }
+  }
+
+  return fn;
+}
 
 /*
  Задание 4:
@@ -54,8 +69,8 @@ function findAllPSiblings(where) {}
  Пример:
    Представим, что есть разметка:
    <body>
-      <div>привет</div>
-      <div>loftschool</div>
+	  <div>привет</div>
+	  <div>loftschool</div>
    </body>
 
    findError(document.body) // функция должна вернуть массив с элементами 'привет' и 'loftschool'
@@ -63,7 +78,7 @@ function findAllPSiblings(where) {}
 function findError(where) {
   const result = [];
 
-  for (const child of where.childNodes) {
+  for (const child of where.children) {
     result.push(child.textContent);
   }
 
@@ -82,7 +97,15 @@ function findError(where) {
    После выполнения функции, дерево <div></div>привет<p></p>loftchool!!!
    должно быть преобразовано в <div></div><p></p>
  */
-function deleteTextNodes(where) {}
+function deleteTextNodes(where) {
+  for (let i = 0; i < where.childNodes.length; i++) {
+    const a = where.childNodes[i];
+    if (a.nodeType === Element.TEXT_NODE) {
+      where.removeChild(a);
+      i--;
+    }
+  }
+}
 
 /*
  Задание 6:
@@ -95,7 +118,17 @@ function deleteTextNodes(where) {}
    После выполнения функции, дерево <span> <div> <b>привет</b> </div> <p>loftchool</p> !!!</span>
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
-function deleteTextNodesRecursive(where) {}
+function deleteTextNodesRecursive(where) {
+  for (let i = 0; i < where.childNodes.length; i++) {
+    const a = where.childNodes[i];
+    if (a.nodeType === Element.TEXT_NODE) {
+      where.removeChild(a);
+      i--;
+    } else if (a.nodeType === Element.ELEMENT_NODE) {
+      deleteTextNodesRecursive(a);
+    }
+  }
+}
 
 /*
  Задание 7 *:
@@ -112,9 +145,9 @@ function deleteTextNodesRecursive(where) {}
    Для дерева <div class="some-class-1"><b>привет!</b> <b class="some-class-1 some-class-2">loftschool</b></div>
    должен быть возвращен такой объект:
    {
-     tags: { DIV: 1, B: 2},
-     classes: { "some-class-1": 2, "some-class-2": 1 },
-     texts: 3
+	 tags: { DIV: 1, B: 2},
+	 classes: { "some-class-1": 2, "some-class-2": 1 },
+	 texts: 3
    }
  */
 function collectDOMStat(root) {}
@@ -138,8 +171,8 @@ function collectDOMStat(root) {}
    Если в where или в одного из его детей добавляется элемент div
    то fn должна быть вызвана с аргументом:
    {
-     type: 'insert',
-     nodes: [div]
+	 type: 'insert',
+	 nodes: [div]
    }
 
    ------
@@ -147,8 +180,8 @@ function collectDOMStat(root) {}
    Если из where или из одного из его детей удаляется элемент div
    то fn должна быть вызвана с аргументом:
    {
-     type: 'remove',
-     nodes: [div]
+	 type: 'remove',
+	 nodes: [div]
    }
  */
 function observeChildNodes(where, fn) {}
